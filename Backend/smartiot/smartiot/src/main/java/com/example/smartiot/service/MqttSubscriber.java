@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MqttSubscriber {
-
-    private static final String BROKER_URL = "tcp://192.168.63.225:1883";
+//  # 👉 MQTT broker adresini buraya yaz (ör: tcp://192.168.1.10:1883)
+    private static final String BROKER_URL ="tcp://<MQTT_BROKER_IP>:1883";
     private static final String CLIENT_ID = "SpringBootSubscriber";
 
     private MqttClient client;
