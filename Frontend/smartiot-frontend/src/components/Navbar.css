@@ -1,0 +1,179 @@
+.navbar {
+  background-color: #1e1e1e;
+  padding: 12px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  height: 60px;
+}
+
+.navbar-logo {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.navbar-logo .brand-bold {
+  color: #00bcd4;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.nav-links li {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  position: relative;
+}
+
+.nav-links li a,
+.dropdown-title {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 8px 10px;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.nav-links li a:hover,
+.nav-links li a.active,
+.dropdown-title:hover {
+  color: #00d0ff;
+}
+
+/* ⬇️ Dropdown stilleri */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #2c2c2c;
+  border-radius: 4px;
+  padding: 8px 0;
+  min-width: 160px;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content li {
+  padding: 6px 16px;
+}
+
+.dropdown-content a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.dropdown-content a:hover,
+.dropdown-content a.active {
+  background-color: #3a3a3a;
+  color: #00d0ff;
+  border-radius: 4px;
+}
+
+/* ✅ Kullanıcı Menüsü */
+.user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.user-name {
+  color: #00e5ff;
+  font-weight: 600;
+  padding: 8px 10px;
+  transition: color 0.2s ease;
+}
+
+.user-name:hover {
+  color: #00ffff;
+}
+
+.user-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #2c2c2c;
+  border: 1px solid #00e5ff;
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 200px;
+  z-index: 999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.user-dropdown p {
+  margin: 6px 0;
+  color: white;
+  font-size: 14px;
+}
+
+.user-dropdown button {
+  margin-top: 8px;
+  padding: 6px 12px;
+  width: 100%;
+  background: #c62828;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.user-dropdown button:hover {
+  background: #e53935;
+}
+
+/* Logout düğmesi eski */
+.logout-button-nav {
+  padding: 6px 12px;
+  background-color: #c62828;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.logout-button-nav:hover {
+  background-color: #e53935;
+}
+
+.dropdown-arrow {
+  font-size: 14px;
+  color: #00e5ff;
+  margin-left: 4px;
+  transform: translateY(1px);
+}

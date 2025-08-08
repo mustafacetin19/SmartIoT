@@ -1,0 +1,19 @@
+.device-card {
+  background: white;
+  padding: 30px;
+  width: 200px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-decoration: none;
+  color: #333;
+  transition: transform 0.2s ease;
+}
+.device-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+.device-icon {
+  font-size: 36px;
+  margin-bottom: 10px;
+}

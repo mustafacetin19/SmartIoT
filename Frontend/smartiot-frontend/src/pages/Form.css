@@ -1,0 +1,156 @@
+/* src/components/Form.css */
+
+.background-wrapper {
+  background-image: url('./circuit-bg.png');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.form-container {
+  max-width: 400px;
+  width: 100%;
+  padding: 30px 25px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-sizing: border-box;
+  color: #ffffff;
+}
+
+.form-container h2 {
+  text-align: center;
+  color: #ffffff;
+}
+
+.form-container input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #000;
+}
+
+.form-container input::placeholder {
+  color: #666;
+}
+
+.form-container button {
+  width: 100%;
+  padding: 12px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.form-container button:hover {
+  background-color: #1565c0;
+}
+
+.form-container p {
+  text-align: center;
+  margin-top: 10px;
+  color: #dddddd;
+}
+
+.login-logo {
+  width: 80px;
+  height: auto;
+  display: block;
+  margin: 0 auto 20px auto;
+  object-fit: contain;
+}
+
+.error-box {
+  width: fit-content;
+  max-width: 260px;
+  padding: 10px 16px;
+  margin: 16px auto 0 auto;
+  background-color: #ffcdd2;
+  color: #b71c1c;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 0 10px rgba(183, 28, 28, 0.5);
+  animation: fadeOut 1s ease-in-out forwards;
+  animation-delay: 4s;
+}
+
+@keyframes fadeOut {
+  0%   { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Sadece form içindeki linkler */
+.form-container a,
+.form-container a:visited {
+  color: #64b5f6 !important;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.form-container a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.password-rules {
+  font-size: 13px;
+  margin: 12px 0;
+  padding-left: 20px;
+  color: #eeeeee;
+  list-style-type: disc;
+  opacity: 0.8;
+}
+
+.password-rules li {
+  margin-bottom: 4px;
+}
+
+/* Navbar logoyu etkilemesin diye garantili stiller */
+.navbar .brand-text {
+  color: white !important;
+  font-size: 22px;
+  font-weight: bold;
+  text-decoration: none !important;
+}
+
+.navbar .brand-bold {
+  color: #00bcd4 !important;
+  font-weight: 700;
+}
+
+/* === Page Fade In Animation === */
+.page-fade {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

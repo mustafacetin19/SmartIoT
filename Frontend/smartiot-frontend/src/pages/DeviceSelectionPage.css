@@ -1,0 +1,78 @@
+/* DeviceSelectionPage.css */
+
+.panel-container {
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #121212;
+  min-height: 100vh;
+  color: #ffffff;
+}
+
+.panel-container h2 {
+  font-size: 2rem;
+  color: #00e5ff;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.panel-container p {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #66ff99;
+  font-weight: 500;
+}
+
+.device-add-controls {
+  background-color: #1f1f1f;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 0 18px rgba(0, 255, 255, 0.25);
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  max-width: 800px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.device-add-controls select,
+.device-add-controls input {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #00bcd4;
+  background-color: #111;
+  color: #ffffff;
+  min-width: 200px;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+}
+
+.device-add-controls select:focus,
+.device-add-controls input:focus {
+  outline: none;
+  border-color: #1de9b6;
+  box-shadow: 0 0 8px rgba(29, 233, 182, 0.5);
+}
+
+.device-button.add {
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 198, 255, 0.3);
+}
+
+.device-button.add:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #0072ff, #004eff);
+  box-shadow: 0 6px 18px rgba(0, 114, 255, 0.5);
+}
