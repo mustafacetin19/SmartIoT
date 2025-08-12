@@ -1,0 +1,102 @@
+.page {
+  max-width: 1100px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+.title {
+  font-size: 28px;
+  margin: 0 0 18px;
+  color: #1ad1ff;
+  letter-spacing: .2px;
+  text-align: center;          /* 👈 başlığı ortala */
+}
+
+.card.center {
+  background: radial-gradient(1200px 400px at 50% -20%, rgba(0, 150, 255, 0.08), transparent),
+              #0e0e0f;
+  border: 1px solid rgba(0, 200, 255, 0.15);
+  border-radius: 16px;
+  padding: 22px;
+  margin: 0 auto;
+  max-width: 920px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.35);
+}
+
+.inline-form {
+  display: grid;
+  grid-template-columns: 1.1fr 1.1fr 1fr auto; /* 👈 hizalı */
+  gap: 12px;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .inline-form { grid-template-columns: 1fr; }
+}
+
+.field { position: relative; }
+
+.with-icon .icon {
+  position: absolute;
+  top: 50%; left: 10px;
+  transform: translateY(-50%);
+  opacity: .85;
+}
+.with-icon .input { padding-left: 36px; }
+
+.input {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #151517;
+  border: 1px solid #2b2c2f;
+  color: #e9f1f8;
+  outline: none;
+}
+.input:focus {
+  border-color: #00b4ff;
+  box-shadow: 0 0 0 3px rgba(0,180,255,.18);
+}
+
+.btn {
+  border: 1px solid #2b2c2f;
+  background: #18191c;
+  color: #e9f1f8;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .05s ease, background .2s ease, border-color .2s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+
+.btn.primary {
+  background: #2d9cff;
+  border-color: #2d9cff;
+  color: #0c1116;
+}
+
+.btn.ghost { 
+  background: transparent;
+}
+
+.quicklinks {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;    /* 👈 butonları ortala */
+}
+
+.alert {
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  background: #3a1212;
+  border: 1px solid #5a1a1a;
+  color: #ffb4b4;
+}
+
+.skeleton { 
+  opacity: .9; 
+  padding: 10px 12px; 
+}

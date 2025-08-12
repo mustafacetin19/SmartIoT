@@ -34,12 +34,10 @@ public class DeviceService {
         return deviceRepository.findByActiveTrue();
     }
 
-
     public Device updateDeviceStatus(Long id, boolean active) {
         Device device = deviceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cihaz bulunamadı"));
         device.setActive(active);
         return deviceRepository.save(device);
     }
-
 }

@@ -8,58 +8,63 @@ import SensorPanel from '../components/SensorPanel';
 
 import './Devices.css';
 import '../components/Buttons.css';
-import './CustomPanel.css'; // ✅ Remove butonları için stil dosyası
+import './CustomPanel.css';        // 👈 başlık rengi & ortalama
 
 const DemoPanel = () => {
-  const renderDemoCard = (title, Component) => (
-    <div className="device-card">
-      <h3>🔧 {title}</h3>
-      <Component onRemove={() => {}} />
-      <button className="remove-button" disabled>
-        ❌ Remove (Demo)
-      </button>
-    </div>
-  );
-
   return (
     <div className="panel-container">
-      <h2>🧪 IoT Test Panel</h2>
-      <p className="demo-info">
+      <h2 className="title">🧪 IoT Test Panel</h2>
+      <p className="demo-info" style={{textAlign:'center', opacity:.8, marginTop:-6, marginBottom:18}}>
         This page shows sample usage of supported IoT devices. It is not user-specific.
       </p>
 
       <div className="device-category">
         <h3 className="category-title">📡 RFID Device</h3>
         <div className="device-category-group">
-          {renderDemoCard("Sample RFID", RfidPanel)}
+          <div className="device-card">
+            <h3>🔧 Sample RFID</h3>
+            <RfidPanel onRemove={() => {}} />
+          </div>
         </div>
       </div>
 
       <div className="device-category">
         <h3 className="category-title">💡 LED Device</h3>
         <div className="device-category-group">
-          {renderDemoCard("Sample LED", LedPanel)}
+          <div className="device-card">
+            <h3>🔧 Sample LED</h3>
+            <LedPanel onRemove={() => {}} />
+          </div>
         </div>
       </div>
 
       <div className="device-category">
         <h3 className="category-title">⚙️ Servo Device</h3>
         <div className="device-category-group">
-          {renderDemoCard("Sample Servo", ServoPanel)}
+          <div className="device-card">
+            <h3>🔧 Sample Servo</h3>
+            <ServoPanel onRemove={() => {}} />
+          </div>
         </div>
       </div>
 
       <div className="device-category">
         <h3 className="category-title">🔊 Buzzer Device</h3>
         <div className="device-category-group">
-          {renderDemoCard("Sample Buzzer", BuzzerPanel)}
+          <div className="device-card">
+            <h3>🔧 Sample Buzzer</h3>
+            <BuzzerPanel onRemove={() => {}} />
+          </div>
         </div>
       </div>
 
       <div className="device-category">
         <h3 className="category-title">🌡️ Sensor Device</h3>
         <div className="device-category-group">
-          {renderDemoCard("Sample Sensor", SensorPanel)}
+          <div className="device-card">
+            <h3>🔧 Sample Sensor</h3>
+            <SensorPanel onRemove={() => {}} />
+          </div>
         </div>
       </div>
     </div>

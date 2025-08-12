@@ -12,7 +12,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;  // <-- Long
 
     private String email;
     private String password;
@@ -24,5 +24,5 @@ public class User {
     private String lastName;
 
     @Column(name = "active")
-    private boolean active;  // true = aktif kullanıcı, false = pasif kullanıcı
+    private boolean active = true;  // varsayılan: aktif
 }

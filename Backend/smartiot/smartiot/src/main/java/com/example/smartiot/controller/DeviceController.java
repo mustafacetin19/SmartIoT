@@ -3,13 +3,10 @@ package com.example.smartiot.controller;
 import com.example.smartiot.model.ServoCommand;
 import com.example.smartiot.service.MqttPublisher;
 import com.example.smartiot.service.SensorDataService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.example.smartiot.service.DeviceService;
 import com.example.smartiot.model.Device;
 import java.util.List;
-
-
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,19 +16,36 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 public class DeviceController {
 
-    private DeviceService deviceService;
-
-
+    private final DeviceService deviceService;
     private final SensorDataService sensorDataService;
     private final MqttPublisher mqttPublisher;
 
-
-    @Autowired
-    public DeviceController(SensorDataService sensorDataService, MqttPublisher mqttPublisher) {
+    // ✅ constructor injection (önceden deviceService null kalıyordu)
+    public DeviceController(DeviceService deviceService,
+                            SensorDataService sensorDataService,
+                            MqttPublisher mqttPublisher) {
+        this.deviceService = deviceService;
         this.sensorDataService = sensorDataService;
         this.mqttPublisher = mqttPublisher;
-        this.deviceService =deviceService;
     }
+
+    // ✅ SELECT-DEVICE sayfası için: tüm cihazlar
+    @GetMapping("/devices")
+    public List<Device> getAllDevices() {
+        return deviceService.getAllDevices();
+    }
+
+    @GetMapping("/devices/active")
+    public List<Device> getActiveDevices() {
+        return deviceService.getActiveDevices();
+    }
+
+    @PostMapping("/devices")
+    public Device addDevice(@RequestBody Device device) {
+        return deviceService.saveDevice(device);
+    }
+
+    // ==== Kontrol endpointleri (mevcutlar) ====
 
     // Servo 1 Toggle (0° ↔ 90°)
     @PostMapping("/control/servo1")
@@ -93,18 +107,6 @@ public class DeviceController {
         sensorDataService.setLastUid(cardId);
         System.out.println("📛 Yeni kart okundu ➜ " + cardId);
     }
-
-    @GetMapping("/devices/active")
-    public List<Device> getActiveDevices() {
-        return deviceService.getActiveDevices();
-    }
-
-    @PostMapping("/devices")
-    public Device addDevice(@RequestBody Device device) {
-        return deviceService.saveDevice(device);
-    }
-
-
 
     // ✅ Arayüz için tüm durumları çek
     @GetMapping("/status")
