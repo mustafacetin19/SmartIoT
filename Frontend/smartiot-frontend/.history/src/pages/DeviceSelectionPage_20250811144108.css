@@ -1,0 +1,119 @@
+.page {
+  max-width: 1100px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+.title {
+  font-size: 28px;
+  margin: 0 0 18px;
+  color: #1ad1ff;
+  letter-spacing: .2px;
+  text-align: center;          /* ➜ başlığı ortala */
+}
+
+.card.center {
+  background:
+    radial-gradient(1200px 400px at 50% -20%, rgba(0, 150, 255, 0.08), transparent),
+    #0e0e0f;
+  border: 1px solid rgba(0, 200, 255, 0.15);
+  border-radius: 16px;
+  padding: 22px;
+  margin: 0 auto;
+  max-width: 920px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.35);
+}
+
+/* ---- form hizalama ---- */
+.inline-form {
+  display: grid;
+  grid-template-columns: 1.15fr 1.15fr 1.2fr auto; /* Select, Select, Input, Button */
+  gap: 12px;
+  align-items: stretch;         /* ➜ hepsini aynı yükseklikte tut */
+}
+@media (max-width: 900px) {
+  .inline-form { grid-template-columns: 1fr; }
+}
+
+.field { position: relative; }
+.with-icon .icon {
+  position: absolute;
+  top: 50%; left: 10px;
+  transform: translateY(-50%);
+  opacity: .85;
+}
+.with-icon .input { padding-left: 36px; }
+
+/* Select & Input ortak görünüm */
+.input {
+  width: 100%;
+  height: 46px;                 /* ➜ sabit yükseklik */
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #151517;
+  border: 1px solid #2b2c2f;
+  color: #e9f1f8;
+  outline: none;
+}
+.input:focus {
+  border-color: #00b4ff;
+  box-shadow: 0 0 0 3px rgba(0,180,255,.18);
+}
+
+/* ---- butonlar ---- */
+.btn {
+  border: 1px solid #2b2c2f;
+  background: #18191c;
+  color: #e9f1f8;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .05s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+  height: 46px;                 /* ➜ inputlarla aynı yükseklik */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn:hover { transform: translateY(-1px); }
+
+/* “Add” butonu */
+.btn.primary {
+  background: linear-gradient(180deg, #2d9cff, #1c86ff);
+  border-color: #2d9cff;
+  color: #0c1116;
+  box-shadow: 0 4px 16px rgba(45,156,255,.25);
+}
+.btn.primary:hover {
+  box-shadow: 0 6px 20px rgba(45,156,255,.35);
+}
+
+/* alt kısım aksiyon butonları */
+.btn.secondary {
+  background: rgba(0, 180, 255, .10);
+  border-color: rgba(0, 200, 255, .35);
+  color: #cfefff;
+}
+.btn.secondary:hover {
+  background: rgba(0, 180, 255, .18);
+  border-color: rgba(0, 200, 255, .55);
+  box-shadow: 0 4px 14px rgba(0, 180, 255, .22);
+}
+
+.quicklinks {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.alert {
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  background: #3a1212;
+  border: 1px solid #5a1a1a;
+  color: #ffb4b4;
+}
+
+.skeleton { opacity: .9; padding: 10px 12px; }
