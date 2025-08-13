@@ -213,12 +213,13 @@ backend/src/main/resources/application.properties
 
 ---
 
+### Notlar
+- Bu README, **Swagger dokümantasyonu** ve **indirilebilir Web Servis PDF’i** ile uyumludur.  
+- Postman kullanacaksanız: **OpenAPI JSON**’u (`/v3/api-docs`) Postman’e **Import** ederek koleksiyon oluşturabilirsiniz.
+ 
+---
+
 ## 📄 Lisans
 
 Bu proje **MIT** lisansı ile lisanslanmıştır.
 
----
-
-### Notlar
-- Bu README, **Swagger dokümantasyonu** ve **indirilebilir Web Servis PDF’i** ile uyumludur.  
-- Postman kullanacaksanız: **OpenAPI JSON**’u (`/v3/api-docs`) Postman’e **Import** ederek koleksiyon oluşturabilirsiniz.
