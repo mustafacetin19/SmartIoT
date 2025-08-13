@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class MqttSubscriber {
 
     // SADECE URL GÜNCELLENDİ
-    private static final String BROKER_URL = "tcp://localhost:1883";
+    private static final String BROKER_URL = "tcp://SENIN_BROKER_IPN:1883";
     private static final String CLIENT_ID = "SpringBootSubscriber";
 
     private MqttClient client;
