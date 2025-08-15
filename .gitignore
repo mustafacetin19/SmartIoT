@@ -23,3 +23,13 @@ mqtt/data/
 # Env files
 .env
 backend/src/main/resources/application.properties
+.history/
+Frontend/smartiot-frontend/.history/
+node_modules/
+dist/
+build/
+**/target/
+.idea/
+.vscode/
+*.iml
+
