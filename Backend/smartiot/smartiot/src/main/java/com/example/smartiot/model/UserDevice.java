@@ -9,6 +9,8 @@ import lombok.*;
 @Getter @Setter @ToString @NoArgsConstructor @AllArgsConstructor
 public class UserDevice {
 
+    public enum Status { ACTIVE, INACTIVE_RESERVED, RETIRED }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +27,7 @@ public class UserDevice {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Device device;
 
-    // ### YENİ: user_room_id
+    // user_room_id
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_room_id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -36,4 +38,8 @@ public class UserDevice {
 
     @Column(name = "active")
     private boolean active = true;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private Status status = Status.ACTIVE;
 }

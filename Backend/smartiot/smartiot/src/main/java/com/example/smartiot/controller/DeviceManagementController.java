@@ -1,67 +1,67 @@
 package com.example.smartiot.controller;
 
 import com.example.smartiot.model.Device;
+import com.example.smartiot.repository.DeviceRepository;
 import com.example.smartiot.service.DeviceService;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.*;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Device Management", description = "Cihaz havuzu ve yönetim")
+@Tag(name = "Device Management", description = "Katalog (salt-okunur) ve stok görünümü")
 @RestController
-@RequestMapping("/api/device")
+@RequestMapping("/api/devices")
 @CrossOrigin(origins = "http://localhost:3000")
+@RequiredArgsConstructor
 public class DeviceManagementController {
 
-    @Autowired
-    private DeviceService deviceService;
+    private final DeviceService deviceService;
+    private final DeviceRepository deviceRepository;
 
-    @Operation(summary = "Tüm cihazları (katalog) listele")
-    @ApiResponse(responseCode = "200", description = "Cihaz listesi",
+    @Operation(summary = "Aktif katalog üniteleri")
+    @ApiResponse(responseCode = "200", description = "Aktif cihazlar",
             content = @Content(mediaType = "application/json",
                     array = @ArraySchema(schema = @Schema(implementation = Device.class))))
-    @GetMapping
-    public List<Device> getAllDevices() {
-        return deviceService.getAllDevices();
+    @GetMapping("/catalog")
+    public List<Device> catalog() {
+        return deviceService.findActive();
     }
 
-    @Operation(summary = "Kataloğa yeni cihaz ekle")
-    @ApiResponse(responseCode = "200", description = "Oluşturulan cihaz",
-            content = @Content(schema = @Schema(implementation = Device.class)))
+    @Operation(summary = "Stok görünümü (model bazında)")
+    @ApiResponse(responseCode = "200", description = "Model bazında stok")
+    @GetMapping("/stock")
+    public List<StockDto> stock() {
+        return deviceRepository.stockByModel().stream()
+                .map(r -> new StockDto(
+                        (String) r[0],
+                        ((Number) r[1]).longValue(),
+                        ((Number) r[2]).longValue()))
+                .toList();
+    }
+    public record StockDto(String model, Long totalUnits, Long availableUnits) {}
+
+    // Katalog CREATE/DELETE kapalı (admin dışı)
     @PostMapping
-    public Device createDevice(
-            @RequestBody(description = "Cihaz gövdesi",
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = Device.class),
-                            examples = @ExampleObject(value = "{\"deviceUid\":\"ESP32-NEW\",\"deviceName\":\"Yeni Cihaz\",\"deviceModel\":\"LED_WS2812B\",\"active\":true}")))
-            @org.springframework.web.bind.annotation.RequestBody Device device) {
-        return deviceService.saveDevice(device);
+    public ResponseEntity<String> createDisabled() {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body("Device catalog is read-only.");
     }
 
-    @Operation(summary = "Katalogdan cihaz sil")
-    @ApiResponse(responseCode = "200", description = "Silindi")
     @DeleteMapping("/{id}")
-    public void deleteDevice(
-            @Parameter(description = "Device ID", example = "101") @PathVariable Long id) {
-        deviceService.deleteDevice(id);
+    public ResponseEntity<String> deleteDisabled(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body("Device catalog is read-only.");
     }
 
-    @Operation(summary = "Katalogdaki cihazın aktiflik durumunu güncelle")
-    @ApiResponse(responseCode = "200", description = "Güncellenen kayıt",
-            content = @Content(schema = @Schema(implementation = Device.class)))
+    // Aktiflik güncelleme istersen tutuldu (opsiyonel)
     @PutMapping("/{id}/status")
-    public Device updateDeviceStatus(
-            @Parameter(description = "Device ID", example = "101") @PathVariable Long id,
-            @Parameter(description = "Aktif mi?", example = "true") @RequestParam boolean active) {
+    public Device updateStatus(@PathVariable Long id, @RequestParam boolean active) {
         return deviceService.updateDeviceStatus(id, active);
     }
 }

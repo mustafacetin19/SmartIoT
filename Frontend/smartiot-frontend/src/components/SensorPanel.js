@@ -2,26 +2,42 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './Panel.css';
-import '../components/Buttons.css'; // Hata veren yoldu, doğru konumdaysa bu şekilde bırakabilirsin
+import '../components/Buttons.css';
 
-function SensorPanel({ onRemove }) {
+function SensorPanel({ device }) {
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user?.id;
+
+  const unitId = device?.device?.id;
   const [temperature, setTemperature] = useState(null);
   const [humidity, setHumidity] = useState(null);
   const [dataHistory, setDataHistory] = useState([]);
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchSensorData = async () => {
       try {
+        if (userId && unitId) {
+          const res = await axios.get('http://localhost:8080/api/control/sensor/last', {
+            params: { userId, deviceId: unitId }
+          });
+          if (mounted && res.status === 200) {
+            const { temperature, humidity } = res.data;
+            setTemperature(temperature);
+            setHumidity(humidity);
+            setDataHistory(prev => [...prev.slice(-9), { time: new Date().toLocaleTimeString(), temperature, humidity }]);
+            return;
+          }
+        }
+        // Fallback (global)
         const response = await axios.get("http://localhost:8080/api/sensor");
         const { temperature, humidity } = response.data;
-
-        setTemperature(temperature);
-        setHumidity(humidity);
-
-        setDataHistory(prev => [
-          ...prev.slice(-9),
-          { time: new Date().toLocaleTimeString(), temperature, humidity }
-        ]);
+        if (mounted) {
+          setTemperature(temperature);
+          setHumidity(humidity);
+          setDataHistory(prev => [...prev.slice(-9), { time: new Date().toLocaleTimeString(), temperature, humidity }]);
+        }
       } catch (error) {
         console.error("❌ Sensör verisi alınamadı:", error);
       }
@@ -29,9 +45,8 @@ function SensorPanel({ onRemove }) {
 
     fetchSensorData();
     const interval = setInterval(fetchSensorData, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
+    return () => { mounted = false; clearInterval(interval); };
+  }, [userId, unitId]);
 
   return (
     <div className="section-panel">
@@ -52,7 +67,6 @@ function SensorPanel({ onRemove }) {
           </LineChart>
         </ResponsiveContainer>
       </div>
-
     </div>
   );
 }

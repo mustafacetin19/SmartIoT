@@ -2,37 +2,33 @@ package com.example.smartiot.service;
 
 import com.example.smartiot.model.Device;
 import com.example.smartiot.repository.DeviceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class DeviceService {
 
-    @Autowired
-    private DeviceRepository deviceRepository;
+    private final DeviceRepository deviceRepository;
 
-    public List<Device> getAllDevices() {
+    public List<Device> getAllDevices() { // eski uyumluluk için
         return deviceRepository.findAll();
+    }
+
+    public List<Device> findActive() {
+        return deviceRepository.findByActiveTrue();
     }
 
     public Optional<Device> getDeviceById(Long id) {
         return deviceRepository.findById(id);
     }
 
-    public Device saveDevice(Device device) {
-        return deviceRepository.save(device);
-    }
-
-    public void deleteDevice(Long id) {
-        deviceRepository.deleteById(id);
-    }
-
-    public List<Device> getActiveDevices() {
-        return deviceRepository.findByActiveTrue();
-    }
+    // Kataloğu create/delete kapattık ama methodlar kalsın (admin/seed olabilir)
+    public Device saveDevice(Device device) { return deviceRepository.save(device); }
+    public void deleteDevice(Long id) { deviceRepository.deleteById(id); }
 
     public Device updateDeviceStatus(Long id, boolean active) {
         Device device = deviceRepository.findById(id)

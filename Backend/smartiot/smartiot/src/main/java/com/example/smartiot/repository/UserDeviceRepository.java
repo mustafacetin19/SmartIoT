@@ -22,10 +22,34 @@ public interface UserDeviceRepository extends JpaRepository<UserDevice, Long> {
 
     Optional<UserDevice> findByIdAndUser_Id(Long id, Long userId);
 
-    // ⬇️ EKLENDİ: “ilk atama” kararını verebilmek için sayım
+    // Havuz sayısı
     long countByUser_IdAndDevice_IdAndUserRoomIsNullAndActiveTrue(Long userId, Long deviceId);
+
+    // Yetki
+    boolean existsByUserIdAndDeviceIdAndActiveTrue(Long userId, Long deviceId);
+
+    // Kullanıcının kullanabildiği üniteler
+    @Query("""
+      select d from Device d
+      where d.active = true and d.id in (
+        select ud.device.id from UserDevice ud
+        where ud.user.id = :userId and ud.active = true
+      )
+    """)
+    List<com.example.smartiot.model.Device> findAllAllowedDevicesForUser(@Param("userId") Long userId);
 
     @Modifying
     @Query("update UserDevice ud set ud.active=false where ud.user.id=:userId")
     int deactivateUserDevicesByUserId(@Param("userId") Long userId);
+
+    // ✅ Aynı kullanıcı + aynı model için REZERVE kayıt (INACTIVE_RESERVED) → reaktivasyon
+    @Query("""
+      select ud from UserDevice ud
+      where ud.user.id = :userId
+        and ud.status = com.example.smartiot.model.UserDevice.Status.INACTIVE_RESERVED
+        and ud.device.deviceModel = :model
+      order by ud.id asc
+    """)
+    Optional<UserDevice> findFirstReservedByUserAndModel(@Param("userId") Long userId,
+                                                         @Param("model") String model);
 }

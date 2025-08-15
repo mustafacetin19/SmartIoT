@@ -7,11 +7,12 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+
 @Service
 public class MqttPublisher {
 
-    // SADECE URL GÜNCELLENDİ
-    private final String brokerUrl = "tcp://SENIN_BROKER_IPN:1883";
+    private final String brokerUrl = "tcp://192.168.199.225:1883";
     private final String clientId = "SpringBootPublisher";
     private MqttClient client;
 
@@ -30,7 +31,6 @@ public class MqttPublisher {
             MqttConnectOptions options = new MqttConnectOptions();
             options.setAutomaticReconnect(true);
             options.setCleanSession(true);
-
             client.connect(options);
             System.out.println("✅ MQTT bağlantısı başarıyla kuruldu.");
         } catch (MqttException e) {
@@ -45,8 +45,7 @@ public class MqttPublisher {
                 System.out.println("🔄 MQTT bağlı değil, yeniden bağlanılıyor...");
                 initConnection();
             }
-
-            MqttMessage mqttMessage = new MqttMessage(message.getBytes());
+            MqttMessage mqttMessage = new MqttMessage(message.getBytes(StandardCharsets.UTF_8));
             mqttMessage.setQos(1);
             client.publish(topic, mqttMessage);
             System.out.println("📤 MQTT mesajı gönderildi ➜ Topic: " + topic + " | Mesaj: " + message);
@@ -56,16 +55,17 @@ public class MqttPublisher {
         }
     }
 
-    public void publishServoCommand(String message) {
-        publishMessage("servo/control", message);
+    // === Üniteye özel yardımcılar (deviceId tabanlı topic) ===
+    public void publishServoByDeviceId(Long deviceId, int angle) {
+        publishMessage("servo/" + deviceId + "/set", String.valueOf(angle));
     }
 
-    public void publishLedCommand(String message) {
-        publishMessage("iot/control/led", message);
+    public void publishLedByDeviceId(Long deviceId, boolean state) {
+        publishMessage("led/" + deviceId + "/set", state ? "on" : "off");
     }
 
-    public void publishBuzzerCommand(String message) {
-        publishMessage("iot/control/buzzer", message);
+    public void publishBuzzerByDeviceId(Long deviceId, String action) {
+        publishMessage("buzzer/" + deviceId + "/set", action);
     }
 
     @PreDestroy

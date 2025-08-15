@@ -1,139 +1,140 @@
-:root {
-  --control-h: 44px; /* tüm kontroller için tek yükseklik */
-}
+:root { color-scheme: dark; }
 
-.page {
+.ds-page {
   max-width: 1100px;
-  margin: 32px auto;
+  margin: 28px auto;
   padding: 0 16px;
 }
 
-/* Başlık */
-.title {
-  font-size: 28px;
-  margin: 0 0 18px;
-  color: #1ad1ff;
-  letter-spacing: .2px;
-  text-align: center;
-}
-
-.card.center {
-  background: radial-gradient(1200px 400px at 50% -20%, rgba(0, 150, 255, 0.08), transparent), #0e0e0f;
-  border: 1px solid rgba(0, 200, 255, 0.15);
-  border-radius: 16px;
-  padding: 22px;
-  margin: 0 auto;
-  max-width: 920px;
-  box-shadow: 0 8px 30px rgba(0,0,0,.35);
-}
-
-/* 3 kolon: cihaz | oda | (isim + add) */
-.inline-form {
+/* Header */
+.ds-header {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.35fr;
-  gap: 14px;
-  align-items: center;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 14px;
 }
-@media (max-width: 900px) {
-  .inline-form { grid-template-columns: 1fr; }
-}
-
-.field { position: relative; }
-.with-icon .icon {
-  position: absolute;
-  top: 50%; left: 10px;
-  transform: translateY(-50%);
-  opacity: .85;
-}
-.with-icon .input { padding-left: 36px; }
-
-/* Tüm kontroller için aynı kutu modeli */
-.input,
-.btn {
-  box-sizing: border-box;
-  height: var(--control-h);
-  border-radius: 12px;
-  border: 1px solid #2b2c2f;
-  font: 600 14px/1 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+@media (max-width: 980px) {
+  .ds-header { grid-template-columns: 1fr; }
 }
 
-/* Select / Input görünümü */
-.input {
-  width: 100%;
-  padding: 0 12px;                 /* dikey padding=0 -> yükseklik tam eşit */
-  background: #151517;
-  color: #e9f1f8;
-  outline: none;
+.ds-title { font-size: 28px; font-weight: 800; margin: 0 0 6px; }
+.ds-sub   { color: #a1a1aa; margin: 0; }
+
+.ds-summary {
+  border: 1px solid #2b2b2b; border-radius: 12px; padding: 12px;
+  background: #121212;
 }
-.input:focus {
-  border-color: #00b4ff;
-  box-shadow: 0 0 0 3px rgba(0,180,255,.18);
+.ds-summary-row { display: flex; justify-content: space-between; padding: 6px 0; }
+.ds-summary-key { color: #9ca3af; font-size: 13px; }
+.ds-summary-val { font-weight: 600; }
+
+/* Card */
+.ds-card {
+  background: #101010; border: 1px solid #242424; border-radius: 12px;
+  padding: 16px; margin-top: 12px;
+}
+.ds-card--form { margin-bottom: 18px; }
+.ds-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.ds-card h2 { margin: 0; font-size: 20px; }
+
+/* Fields */
+.ds-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.ds-field label { font-size: 13px; color: #b1b1b7; }
+.ds-req { color: #ef4444; margin-left: 3px; }
+.ds-hint { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+.ds-meta { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+.ml8 { margin-left: 8px; }
+
+.ds-field input, .ds-field select {
+  background: #1a1a1a; color: #e8e8e8; border: 1px solid #2b2b2b;
+  border-radius: 10px; padding: 10px 12px; outline: none;
+}
+.ds-field input:focus, .ds-field select:focus { border-color: #3b82f6; }
+.ds-invalid { border-color: #ef4444 !important; }
+.ds-err { color: #ef4444; font-size: 12px; }
+
+/* Chip row (model seçimi) */
+.ds-chip-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+}
+.ds-chip {
+  display: flex; align-items: center; gap: 10px; justify-content: space-between;
+  border: 1px solid #2b2b2b; background: #141414; color: #eaeaea;
+  border-radius: 10px; padding: 10px 12px; cursor: pointer; text-align: left;
+}
+.ds-chip:hover { background: #191919; }
+.ds-chip--active { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,.25) inset; }
+.ds-chip-ico { font-size: 18px; }
+.ds-dot { width: 9px; height: 9px; border-radius: 50%; }
+.ds-dot--ok { background: #16a34a; }
+.ds-dot--no { background: #ef4444; }
+
+/* Badges */
+.ds-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 28px; height: 24px; padding: 0 8px;
+  border-radius: 999px; font-weight: 700; font-size: 12px;
+  border: 1px solid transparent;
+}
+.ds-badge--ok { background: #12381f; color: #9cfaa8; border-color: #1e6a32; }
+.ds-badge--no { background: #3a1111; color: #ffb3b3; border-color: #7a2a2a; }
+
+/* Buttons */
+.ds-inline { display: flex; gap: 8px; align-items: center; }
+.ds-actions { display: flex; align-items: center; gap: 12px; margin-top: 2px; }
+.ds-btn {
+  border: 1px solid #2b2b2b; background: #1f1f1f; color: #e8e8e8;
+  padding: 9px 12px; border-radius: 10px; cursor: pointer;
+}
+.ds-btn:hover { background: #262626; }
+.ds-btn:disabled { opacity: .6; cursor: not-allowed; }
+.ds-btn--primary { background: #2563eb; border-color: #1f4fd3; }
+.ds-btn--secondary { background: #3b3b3b; }
+.ds-btn--ghost { background: transparent; }
+.ds-btn--success { background: #198754; border-color: #157347; }
+.ds-btn--warning { background: #7c3aed; border-color: #6d28d9; }
+
+.ds-msg { color: #cbd5e1; font-size: 13px; }
+
+/* Grid */
+.ds-grid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+.ds-empty {
+  border: 1px dashed #343434; border-radius: 10px; padding: 14px;
+  color: #9ca3af;
 }
 
-/* Select’lerde tarayıcı farklarını kapat */
-select.input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  padding-right: 34px;             /* ok alanı */
+/* Device card */
+.ds-device {
+  border: 1px solid #2b2b2b; border-radius: 12px; padding: 12px; background: #111;
+}
+.ds-device-head { display: grid; grid-template-columns: 44px 1fr; gap: 10px; align-items: center; margin-bottom: 8px; }
+.ds-device-ico { font-size: 26px; text-align: center; }
+.ds-device-name { font-weight: 700; }
+.ds-device-sub { color: #9ca3af; font-size: 12px; }
+.ds-controls { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.ds-note { color: #9ca3af; font-size: 13px; }
+
+/* Toast */
+.ds-toast {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  background: #0f172a; color: #e2e8f0; border: 1px solid #1e293b;
+  padding: 10px 14px; border-radius: 10px; z-index: 50;
 }
 
-/* input + Add tek grup (bootstrap input-group benzeri) */
-.input-with-button {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: stretch;            /* ikisi de tam yükseklik */
+/* Modal */
+.ds-modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: grid; place-items: center; z-index: 40;
 }
-.input-with-button .input {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+.ds-modal-card {
+  width: min(92vw, 420px);
+  background: #101010; border: 1px solid #2b2b2b; border-radius: 12px;
+  padding: 16px;
 }
-.input-with-button .btn.primary {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  margin-left: -1px;               /* kenar çizgileri birleşsin */
-}
-
-/* Butonlar */
-.btn {
-  background: #18191c;
-  color: #e9f1f8;
-  padding: 0 16px;                 /* yükseklik sabit, yatay padding sabit */
-  cursor: pointer;
-  transition: transform .05s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
-}
-.btn:hover { transform: translateY(-1px); }
-
-.btn.primary {
-  background: linear-gradient(180deg, #54b7ff, #2d9cff);
-  border-color: #2d9cff;
-  color: #0c1116;
-  box-shadow: 0 6px 18px rgba(45,156,255,.30);
-}
-
-/* Alt kısa yol butonları */
-.btn.action {
-  background: linear-gradient(180deg, #263bff, #1b8fff);
-  border-color: #1b8fff;
-  color: #ffffff;
-  box-shadow: 0 6px 18px rgba(27,143,255,.28);
-}
-.btn.action:hover { box-shadow: 0 8px 22px rgba(27,143,255,.38); }
-
-.quicklinks {
-  margin-top: 14px;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* Uyarı / yükleniyor */
-.alert {
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
-  background: #3a1212;
-  border: 1px solid #5a1a1a;
-  color: #ffb4b4;
-}
-.skeleton { opacity: .9; padding: 10px 12px; }
+.ds-modal-card h3 { margin: 0 0 10px; }
+.mt12 { margin-top: 12px; }

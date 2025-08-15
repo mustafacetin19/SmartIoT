@@ -32,12 +32,17 @@ const CustomPanel = () => {
   };
   const getRoomName = (d) => d?.userRoom?.roomName || '';
 
+  // Cihazları çek – yalnızca oda atanmış ve status=ACTIVE (ve active=true) olanları göster
   useEffect(() => {
     if (!userId) return;
     axios.get(`http://localhost:8080/api/user-devices/user/${userId}`)
       .then(res => {
         const onlyAssignedActive = (res.data || [])
-          .filter(d => d.active && d.userRoom);
+          .filter(d =>
+            d.userRoom &&
+            d.active === true &&
+            (!d.status || d.status === 'ACTIVE') // eski veriler için koruma
+          );
         setUserDevices(onlyAssignedActive);
         setFilteredDevices(onlyAssignedActive);
       })
@@ -58,10 +63,28 @@ const CustomPanel = () => {
     setFilteredDevices(filtered);
   }, [selectedRoom, selectedType, searchName, userDevices]);
 
-  const handleRemove = (deviceId) => {
-    axios.put(`http://localhost:8080/api/user-devices/${deviceId}/deactivate`)
-      .then(() => setUserDevices(prev => prev.filter(d => d.id !== deviceId)))
-      .catch(err => console.error("Error while deactivating:", err));
+  // Yeni remove: kullanıcıya temporary/replace seçtir
+  const handleRemove = async (userDeviceId) => {
+    const choice = window.prompt(
+      "Cihazı nasıl çıkarmak istiyorsunuz?\n1) Geçici (yarın tekrar takacağım)\n2) Arızalı/kalıcı (değiştirilecek)",
+      "1"
+    );
+    if (choice !== "1" && choice !== "2") return;
+    const mode = choice === "1" ? "temporary" : "replace";
+
+    try {
+      await axios.patch(
+        `http://localhost:8080/api/user-devices/${userDeviceId}/remove`,
+        null,
+        { params: { userId, mode } }
+      );
+      // panelden düşür
+      setUserDevices(prev => prev.filter(d => d.id !== userDeviceId));
+      setFilteredDevices(prev => prev.filter(d => d.id !== userDeviceId));
+    } catch (err) {
+      console.error("Error while removing device:", err);
+      alert("Cihaz kaldırılırken bir hata oluştu.");
+    }
   };
 
   const getUniqueRooms = () =>

@@ -2,37 +2,64 @@ package com.example.smartiot.config;
 
 import com.example.smartiot.model.Device;
 import com.example.smartiot.repository.DeviceRepository;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+// import org.springframework.context.annotation.Profile; // sadece dev'de çalıştırmak istersen aç
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
-public class DeviceDataInitializer {
+// @Profile("dev")
+public class DeviceDataInitializer implements ApplicationRunner {
 
-    @Autowired
-    private DeviceRepository deviceRepository;
+    private final DeviceRepository deviceRepository;
 
-    @PostConstruct
-    public void init() {
-        createIfNotExist("RFID-001", "RFID Reader", "RFID");
-        createIfNotExist("LED-001", "White LED", "LED-White");
-        createIfNotExist("LED-002", "Red LED", "LED-Red");
-        createIfNotExist("LED-003", "Blue LED", "LED-Blue");
-        createIfNotExist("LED-004", "Yellow LED", "LED-Yellow");
-        createIfNotExist("BUZ-001", "Buzzer", "BUZZER");
-        createIfNotExist("SERVO-001", "Servo Motor 1", "SERVO-1");
-        createIfNotExist("SERVO-002", "Servo Motor 2", "SERVO-2");
-        createIfNotExist("DHT11-001", "Temp & Humidity", "DHT11");
-
-        System.out.println("Varsayılan cihaz kontrolü tamamlandı.");
+    public DeviceDataInitializer(DeviceRepository deviceRepository) {
+        this.deviceRepository = deviceRepository;
     }
 
-    private void createIfNotExist(String uid, String name, String model) {
-        if (!deviceRepository.existsByDeviceUid(uid)) {
-            deviceRepository.save(new Device(uid, name, model, true));
-            System.out.println("✅ Eklendi: " + name);
-        } else {
-            System.out.println("ℹ️ Zaten mevcut: " + uid);
+    @Override
+    public void run(ApplicationArguments args) {
+        // LED renkleri (her birine AYRI prefix veriyoruz)
+        seedModel("Led-White",  "White LED",       "LEDW-",  100);
+        seedModel("Led-Red",    "Red LED",         "LEDR-",  100);
+        seedModel("Led-Blue",   "Blue LED",        "LEDB-",  100);
+        seedModel("Led-Yellow", "Yellow LED",      "LEDY-",  100);
+
+        // Diğer cihazlar
+        seedModel("RFID",       "RFID Reader",     "RFID-",  100);
+        seedModel("SERVO",      "Servo Motor",     "SERVO-", 100);
+        seedModel("BUZZER",     "Buzzer",          "BUZ-",   100);
+        seedModel("DHT11",      "Temp & Humidity", "DHT11-", 100);
+    }
+
+    /** Verilen model için aktif stok hedefin altındaysa eksik kadar ünite üretir. */
+    private void seedModel(String deviceModel, String deviceName, String uidPrefix, int targetCount) {
+        long existingActive = deviceRepository.countByDeviceModelAndActiveTrue(deviceModel);
+        int need = (int) (targetCount - existingActive);
+
+        if (need <= 0) {
+            System.out.printf("✔ %s zaten hedefte/üstünde (aktif: %d, hedef: %d).%n",
+                    deviceModel, existingActive, targetCount);
+            return;
         }
+
+        int start = deviceRepository.findMaxNumericSuffixForPrefix(uidPrefix) + 1;
+
+        List<Device> batch = new ArrayList<>(need);
+        for (int i = 0; i < need; i++) {
+            Device d = new Device();
+            d.setDeviceModel(deviceModel);
+            d.setDeviceName(deviceName);
+            d.setDeviceUid(uidPrefix + String.format("%06d", start + i)); // örn: LEDW-000123
+            d.setActive(true);
+            batch.add(d);
+        }
+
+        deviceRepository.saveAll(batch); // her çağrı kendi transaction'ında
+        System.out.printf("✅ Seeded %-10s : +%d (şimdi: %d/%d)%n",
+                deviceModel, need, (existingActive + need), targetCount);
     }
 }
