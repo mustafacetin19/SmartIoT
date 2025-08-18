@@ -1,9 +1,10 @@
 package com.example.smartiot.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "devices")
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@JsonPropertyOrder({ "id", "deviceUid", "deviceName", "deviceModel", "type", "active" })
 @Schema(description = "Sistemde kayıtlı donanım cihazı")
 public class Device {
 
@@ -21,15 +24,15 @@ public class Device {
     private Long id;
 
     @Column(name = "device_uid", nullable = false, unique = true)
-    @Schema(description = "Cihazın benzersiz donanım UID'i", example = "ESP32-3F:AB:9C:11")
+    @Schema(description = "Cihazın benzersiz donanım UID'i", example = "LEDW-000123")
     private String deviceUid;
 
     @Column(name = "device_name")
-    @Schema(description = "Kullanıcının verdiği görünen ad", example = "Salon Lamba 1")
+    @Schema(description = "Görünen ad (katalog adı, alias değil)", example = "White LED")
     private String deviceName;
 
     @Column(name = "device_model")
-    @Schema(description = "Cihazın model/türü bilgisi", example = "LED_WS2812B")
+    @Schema(description = "Cihazın model/türü", example = "Led-White")
     private String deviceModel;
 
     @Column(name = "active")
@@ -43,24 +46,23 @@ public class Device {
         this.active = active;
     }
 
-    /**
-     * JSON dönüşünde sadece-okunur 'type' alanı olarak gösterilir.
-     */
+    /** JSON dönüşünde sadece-okunur 'type' alanı olarak gösterilir. */
     @Transient
     @JsonProperty("type")
-    @Schema(description = "Modelden türetilen cihaz tipi (LED, SERVO, RFID, BUZZER, DHT11 veya UNKNOWN)",
-            accessMode = Schema.AccessMode.READ_ONLY, example = "LED")
+    @Schema(
+            description = "Modelden türetilen cihaz tipi",
+            accessMode = Schema.AccessMode.READ_ONLY,
+            example = "LED",
+            allowableValues = { "LED", "SERVO", "RFID", "BUZZER", "DHT11", "UNKNOWN" }
+    )
     public String getType() {
         if (deviceModel == null) return null;
-
         String model = deviceModel.toUpperCase();
-
-        if (model.contains("LED")) return "LED";
+        if (model.contains("LED"))   return "LED";
         if (model.contains("SERVO")) return "SERVO";
-        if (model.contains("RFID")) return "RFID";
-        if (model.contains("BUZZER")) return "BUZZER";
-        if (model.contains("DHT")) return "DHT11";
-
+        if (model.contains("RFID"))  return "RFID";
+        if (model.contains("BUZZ"))  return "BUZZER";
+        if (model.contains("DHT"))   return "DHT11";
         return "UNKNOWN";
     }
 }

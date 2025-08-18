@@ -128,7 +128,7 @@ public class UserDeviceService {
 
     // ====== Yetki ve allowed list ======
     public boolean userHasAccess(Long userId, Long deviceId) {
-        return userDeviceRepository.existsByUserIdAndDeviceIdAndActiveTrue(userId, deviceId);
+        return userDeviceRepository.existsByUser_IdAndDevice_IdAndActiveTrue(userId, deviceId);
     }
 
     public List<Device> listAllowedDevices(Long userId) {

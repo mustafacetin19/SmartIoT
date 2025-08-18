@@ -1,18 +1,25 @@
 package com.example.smartiot.repository;
 
-import com.example.smartiot.model.UserDevice;
+import com.example.smartiot.model.Device;
 import com.example.smartiot.model.User;
-import org.springframework.data.jpa.repository.*;
+import com.example.smartiot.model.UserDevice;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserDeviceRepository extends JpaRepository<UserDevice, Long> {
 
+    // ---- Basit sorgular ----
     List<UserDevice> findByUser(User user);
     List<UserDevice> findByUserAndActiveTrue(User user);
-    List<UserDevice> findByUserId(Long userId);
+
+    // userId alanına ilişki üzerinden iniyoruz
+    List<UserDevice> findByUser_Id(Long userId);
 
     // Kullanıcının oda atanmamış (havuz) ve aktif cihazları
     List<UserDevice> findByUser_IdAndUserRoomIsNullAndActiveTrue(Long userId);
@@ -20,15 +27,16 @@ public interface UserDeviceRepository extends JpaRepository<UserDevice, Long> {
     // Havuzda aynı cihazdan var mı?
     boolean existsByUser_IdAndDevice_IdAndUserRoomIsNull(Long userId, Long deviceId);
 
+    // Kayıt doğrulama
     Optional<UserDevice> findByIdAndUser_Id(Long id, Long userId);
 
     // Havuz sayısı
     long countByUser_IdAndDevice_IdAndUserRoomIsNullAndActiveTrue(Long userId, Long deviceId);
 
-    // Yetki
-    boolean existsByUserIdAndDeviceIdAndActiveTrue(Long userId, Long deviceId);
+    // Yetki kontrolü (HATALI olan imza düzeltildi)
+    boolean existsByUser_IdAndDevice_IdAndActiveTrue(Long userId, Long deviceId);
 
-    // Kullanıcının kullanabildiği üniteler
+    // Kullanıcının kullanabildiği aktif Device listesi
     @Query("""
       select d from Device d
       where d.active = true and d.id in (
@@ -36,10 +44,12 @@ public interface UserDeviceRepository extends JpaRepository<UserDevice, Long> {
         where ud.user.id = :userId and ud.active = true
       )
     """)
-    List<com.example.smartiot.model.Device> findAllAllowedDevicesForUser(@Param("userId") Long userId);
+    List<Device> findAllAllowedDevicesForUser(@Param("userId") Long userId);
 
-    @Modifying
-    @Query("update UserDevice ud set ud.active=false where ud.user.id=:userId")
+    // Bir kullanıcıya ait tüm UserDevice kayıtlarını pasif yap
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("update UserDevice ud set ud.active = false where ud.user.id = :userId")
     int deactivateUserDevicesByUserId(@Param("userId") Long userId);
 
     // ✅ Aynı kullanıcı + aynı model için REZERVE kayıt (INACTIVE_RESERVED) → reaktivasyon

@@ -17,7 +17,7 @@ const MODEL_ICONS = {
 
 const MODELS = Object.keys(MODEL_ICONS);
 
-// Küçük yardımcılar
+// Küçük yardımcı
 const cls = (...xs) => xs.filter(Boolean).join(" ");
 
 export default function DeviceSelectionPage() {
@@ -25,7 +25,7 @@ export default function DeviceSelectionPage() {
 
   // stok & form
   const [stock, setStock] = useState([]);
-  const [model, setModel] = useState(MODELS[0]);
+  const [model, setModel] = useState("");           // ⬅ combobox için boş başlat
   const [alias, setAlias] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -73,11 +73,12 @@ export default function DeviceSelectionPage() {
     return m;
   }, [stock]);
 
-  const hasStock = (availableByModel[model] ?? 0) > 0;
+  const hasModel = !!model;
+  const hasStock = hasModel && (availableByModel[model] ?? 0) > 0;
   const requiredRoomMissing = !roomId;
   const requiredAliasMissing = !alias.trim();
   const canAssign =
-    user?.id && hasStock && !loading && !requiredRoomMissing && !requiredAliasMissing;
+      user?.id && hasModel && hasStock && !loading && !requiredRoomMissing && !requiredAliasMissing;
 
   // --------- Actions ----------
   const assign = async () => {
@@ -132,198 +133,194 @@ export default function DeviceSelectionPage() {
   };
 
   return (
-    <div className="ds-page">
-      <header className="ds-header">
-        <div>
-          <h1 className="ds-title">Cihaz Ekle (Modelden Atama)</h1>
-          <p className="ds-sub">
-            Modeli seç, oda ve takma adı belirle. Stok varsa sistem uygun bir
-            ünitenin atamasını otomatik yapar.
-          </p>
-        </div>
-        <div className="ds-summary">
-          <div className="ds-summary-row">
-            <span className="ds-summary-key">Seçilen Model</span>
-            <span className="ds-summary-val">
-              {MODEL_ICONS[model]} {model}
-            </span>
+      <div className="ds-page">
+        <header className="ds-header">
+          <div>
+            <h1 className="ds-title">Cihaz Ekle (Modelden Atama)</h1>
+            <p className="ds-sub">
+              Modeli seç, oda ve takma adı belirle. Stok varsa sistem uygun bir
+              ünitenin atamasını otomatik yapar.
+            </p>
           </div>
-          <div className="ds-summary-row">
-            <span className="ds-summary-key">Stok</span>
-            <span
-              className={cls(
-                "ds-badge",
-                (availableByModel[model] ?? 0) > 0 ? "ds-badge--ok" : "ds-badge--no"
-              )}
-            >
-              {availableByModel[model] ?? 0}
+          <div className="ds-summary">
+            <div className="ds-summary-row">
+              <span className="ds-summary-key">Seçilen Model</span>
+              <span className="ds-summary-val">
+              {hasModel ? (<>{MODEL_ICONS[model]} {model}</>) : "—"}
             </span>
-          </div>
-          <div className="ds-summary-row">
-            <span className="ds-summary-key">Oda</span>
-            <span className="ds-summary-val">
+            </div>
+            <div className="ds-summary-row">
+              <span className="ds-summary-key">Stok</span>
+              <span
+                  className={cls(
+                      "ds-badge",
+                      hasModel && (availableByModel[model] ?? 0) > 0 ? "ds-badge--ok" : "ds-badge--no"
+                  )}
+              >
+              {hasModel ? (availableByModel[model] ?? 0) : 0}
+            </span>
+            </div>
+            <div className="ds-summary-row">
+              <span className="ds-summary-key">Oda</span>
+              <span className="ds-summary-val">
               {rooms.find((r) => String(r.id) === String(roomId))?.roomName || "—"}
             </span>
+            </div>
+            <div className="ds-summary-row">
+              <span className="ds-summary-key">Takma Ad</span>
+              <span className="ds-summary-val">{alias || "—"}</span>
+            </div>
           </div>
-          <div className="ds-summary-row">
-            <span className="ds-summary-key">Takma Ad</span>
-            <span className="ds-summary-val">{alias || "—"}</span>
-          </div>
-        </div>
-      </header>
+        </header>
 
-      {/* FORM CARD */}
-      <section className="ds-card ds-card--form">
-        {/* Model çipleri */}
-        <div className="ds-field">
-          <label>Model</label>
-          <div className="ds-chip-row" role="tablist" aria-label="Model seçimi">
-            {MODELS.map((m) => (
-              <button
-                key={m}
-                role="tab"
-                aria-selected={model === m}
-                className={cls("ds-chip", model === m && "ds-chip--active")}
-                onClick={() => setModel(m)}
-                title={m}
-              >
-                <span className="ds-chip-ico">{MODEL_ICONS[m]}</span>
-                <span>{m}</span>
-                <span
-                  className={cls(
-                    "ds-dot",
-                    (availableByModel[m] ?? 0) > 0 ? "ds-dot--ok" : "ds-dot--no"
-                  )}
-                  title={`Stok: ${availableByModel[m] ?? 0}`}
-                />
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* FORM CARD */}
+        <section className="ds-card ds-card--form">
 
-        {/* Oda seçimi */}
-        <div className="ds-field">
-          <label>
-            Oda <span className="ds-req">*</span>
-          </label>
-          <div className="ds-inline">
+          {/* Model seçimi – COMBOBOX */}
+          <div className="ds-field">
+            <label>
+              Model <span className="ds-req">*</span>
+            </label>
             <select
-              className={requiredRoomMissing ? "ds-invalid" : ""}
-              value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
+                className={!hasModel ? "ds-invalid" : ""}
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
             >
               <option value="">(seçin)</option>
-              {rooms.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.roomName}
-                </option>
+              {MODELS.map((m) => (
+                  <option key={m} value={m}>
+                    {MODEL_ICONS[m]} {m}
+                  </option>
               ))}
             </select>
-            <button
-              className="ds-btn ds-btn--ghost"
-              type="button"
-              onClick={() => setRoomModalOpen(true)}
-            >
-              + Oda Oluştur
-            </button>
+            {!hasModel && <div className="ds-err">Model seçimi zorunludur.</div>}
           </div>
-          {requiredRoomMissing && (
-            <div className="ds-err">Oda seçimi zorunludur.</div>
-          )}
-          {!rooms.length && (
-            <div className="ds-hint">
-              Henüz odanız yok. “+ Oda Oluştur” ile başlayın.
-            </div>
-          )}
-        </div>
 
-        {/* Takma ad */}
-        <div className="ds-field">
-          <label>
-            Takma ad <span className="ds-req">*</span>
-          </label>
-          <input
-            className={requiredAliasMissing ? "ds-invalid" : ""}
-            value={alias}
-            onChange={(e) => setAlias(e.target.value)}
-            placeholder="Örn: Salon Beyaz, Mutfak Servo..."
-            maxLength={40}
-          />
-          <div className="ds-meta">
-            {alias.length}/40
-            {requiredAliasMissing && (
-              <span className="ds-err ml8">Takma ad zorunludur.</span>
+          {/* Oda seçimi */}
+          <div className="ds-field">
+            <label>
+              Oda <span className="ds-req">*</span>
+            </label>
+            <div className="ds-inline">
+              <select
+                  className={requiredRoomMissing ? "ds-invalid" : ""}
+                  value={roomId}
+                  onChange={(e) => setRoomId(e.target.value)}
+              >
+                <option value="">(seçin)</option>
+                {rooms.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.roomName}
+                    </option>
+                ))}
+              </select>
+              <button
+                  className="ds-btn ds-btn--ghost"
+                  type="button"
+                  onClick={() => setRoomModalOpen(true)}
+              >
+                + Oda Oluştur
+              </button>
+            </div>
+            {requiredRoomMissing && (
+                <div className="ds-err">Oda seçimi zorunludur.</div>
+            )}
+            {!rooms.length && (
+                <div className="ds-hint">
+                  Henüz odanız yok. “+ Oda Oluştur” ile başlayın.
+                </div>
             )}
           </div>
-        </div>
 
-        {/* CTA */}
-        <div className="ds-actions">
-          <button
-            className="ds-btn ds-btn--primary"
-            onClick={assign}
-            disabled={!canAssign}
-            title={
-              !hasStock
-                ? "Bu modelde stok yok"
-                : requiredRoomMissing || requiredAliasMissing
-                ? "Oda ve takma ad zorunludur"
-                : ""
-            }
-          >
-            {loading ? "Atanıyor..." : "Cihaz Ekle"}
-          </button>
-
-          {!hasStock && (
-            <span className="ds-msg">Bu modelde şu an stok yok.</span>
-          )}
-        </div>
-      </section>
-
-      {/* Atanmış cihazlar */}
-      <AssignedDevices userId={user?.id} />
-
-      {/* Toast */}
-      {toast && <div className="ds-toast">{toast}</div>}
-
-      {/* Oda oluşturma modalı */}
-      {roomModalOpen && (
-        <div
-          className="ds-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Oda oluştur"
-        >
-          <div className="ds-modal-card">
-            <h3>Yeni Oda</h3>
+          {/* Takma ad */}
+          <div className="ds-field">
+            <label>
+              Takma ad <span className="ds-req">*</span>
+            </label>
             <input
-              autoFocus
-              value={newRoom}
-              onChange={(e) => setNewRoom(e.target.value)}
-              placeholder="Örn: Salon, Mutfak, Ofis..."
+                className={requiredAliasMissing ? "ds-invalid" : ""}
+                value={alias}
+                onChange={(e) => setAlias(e.target.value)}
+                placeholder="Örn: Salon Beyaz, Mutfak Servo..."
+                maxLength={40}
             />
-            <div className="ds-inline mt12">
-              <button
-                className="ds-btn ds-btn--secondary"
-                onClick={createRoom}
-                disabled={roomBusy || !newRoom.trim()}
-              >
-                {roomBusy ? "Oluşturuluyor..." : "Oluştur"}
-              </button>
-              <button
-                className="ds-btn ds-btn--ghost"
-                onClick={() => {
-                  setRoomModalOpen(false);
-                  setNewRoom("");
-                }}
-              >
-                İptal
-              </button>
+            <div className="ds-meta">
+              {alias.length}/40
+              {requiredAliasMissing && (
+                  <span className="ds-err ml8">Takma ad zorunludur.</span>
+              )}
             </div>
           </div>
-        </div>
-      )}
-    </div>
+
+          {/* CTA */}
+          <div className="ds-actions">
+            <button
+                className="ds-btn ds-btn--primary"
+                onClick={assign}
+                disabled={!canAssign}
+                title={
+                  !hasModel
+                      ? "Model seçiniz"
+                      : !hasStock
+                          ? "Bu modelde stok yok"
+                          : requiredRoomMissing || requiredAliasMissing
+                              ? "Oda ve takma ad zorunludur"
+                              : ""
+                }
+            >
+              {loading ? "Atanıyor..." : "Cihaz Ekle"}
+            </button>
+
+            {hasModel && !hasStock && (
+                <span className="ds-msg">Bu modelde şu an stok yok.</span>
+            )}
+          </div>
+        </section>
+
+        {/* Atanmış cihazlar */}
+        <AssignedDevices userId={user?.id} />
+
+        {/* Toast */}
+        {toast && <div className="ds-toast">{toast}</div>}
+
+        {/* Oda oluşturma modalı */}
+        {roomModalOpen && (
+            <div
+                className="ds-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Oda oluştur"
+            >
+              <div className="ds-modal-card">
+                <h3>Yeni Oda</h3>
+                <input
+                    autoFocus
+                    value={newRoom}
+                    onChange={(e) => setNewRoom(e.target.value)}
+                    placeholder="Örn: Salon, Mutfak, Ofis..."
+                />
+                <div className="ds-inline mt12">
+                  <button
+                      className="ds-btn ds-btn--secondary"
+                      onClick={createRoom}
+                      disabled={roomBusy || !newRoom.trim()}
+                  >
+                    {roomBusy ? "Oluşturuluyor..." : "Oluştur"}
+                  </button>
+                  <button
+                      className="ds-btn ds-btn--ghost"
+                      onClick={() => {
+                        setRoomModalOpen(false);
+                        setNewRoom("");
+                      }}
+                  >
+                    İptal
+                  </button>
+                </div>
+              </div>
+            </div>
+        )}
+      </div>
   );
 }
 
@@ -347,67 +344,68 @@ function AssignedDevices({ userId }) {
   }, [userId, refresh]);
 
   return (
-    <section className="ds-card">
-      <div className="ds-card-head">
-        <h2>Atanmış Cihazlarım</h2>
-        <button
-          className="ds-btn ds-btn--ghost"
-          onClick={() => setRefresh((x) => x + 1)}
-        >
-          {busy ? "Yükleniyor..." : "Yenile"}
-        </button>
-      </div>
+      <section className="ds-card">
+        <div className="ds-card-head">
+          <h2>Atanmış Cihazlarım</h2>
+          <button
+              className="ds-btn ds-btn--ghost"
+              onClick={() => setRefresh((x) => x + 1)}
+          >
+            {busy ? "Yükleniyor..." : "Yenile"}
+          </button>
+        </div>
 
-      {!list.length ? (
-        <div className="ds-empty">
-          Henüz atanmış cihaz yok. Yukarıdan bir model seçerek ekleyebilirsin.
-        </div>
-      ) : (
-        <div className="ds-grid">
-          {list.map((d) => (
-            <DeviceCard key={d.id} device={d} />
-          ))}
-        </div>
-      )}
-    </section>
+        {!list.length ? (
+            <div className="ds-empty">
+              Henüz atanmış cihaz yok. Yukarıdan bir model seçerek ekleyebilirsin.
+            </div>
+        ) : (
+            <div className="ds-grid">
+              {list.map((d) => (
+                  <DeviceCard key={d.id} device={d} userId={userId} />
+              ))}
+            </div>
+        )}
+      </section>
   );
 }
 
-function DeviceCard({ device }) {
+function DeviceCard({ device, userId }) {
   const icon = MODEL_ICONS[device.deviceModel] || "🔧";
   return (
-    <div className="ds-device">
-      <div className="ds-device-head">
-        <div className="ds-device-ico">{icon}</div>
-        <div>
-          <div className="ds-device-name">
-            {device.deviceName || device.deviceModel}
-          </div>
-          <div className="ds-device-sub">
-            Model: {device.deviceModel} • ID: {device.id}
+      <div className="ds-device">
+        <div className="ds-device-head">
+          <div className="ds-device-ico">{icon}</div>
+          <div>
+            <div className="ds-device-name">
+              {device.deviceName || device.deviceModel}
+            </div>
+            <div className="ds-device-sub">
+              Model: {device.deviceModel} • ID: {device.id}
+            </div>
           </div>
         </div>
+        <DeviceControls device={device} userId={userId} />
       </div>
-      <DeviceControls device={device} />
-    </div>
   );
 }
 
-function DeviceControls({ device }) {
+function DeviceControls({ device, userId }) {
   const model = (device.deviceModel || "").toUpperCase();
-  if (model.startsWith("LED")) return <LedControl device={device} />;
-  if (model.startsWith("SERVO")) return <ServoControl device={device} />;
-  if (model.startsWith("BUZZER")) return <BuzzerControl device={device} />;
+  if (model.startsWith("LED")) return <LedControl device={device} userId={userId} />;
+  if (model.startsWith("SERVO")) return <ServoControl device={device} userId={userId} />;
+  if (model.startsWith("BUZZER")) return <BuzzerControl device={device} userId={userId} />;
   return <div className="ds-note">Bu model için kontrol yok.</div>;
 }
 
-function LedControl({ device }) {
+function LedControl({ device, userId }) {
   const [on, setOn] = useState(false);
   const [busy, setBusy] = useState(false);
   const toggle = async (state) => {
     setBusy(true);
     try {
       const url = new URL(`${API}/api/control/led`);
+      url.searchParams.set("userId", userId);           // ⬅ zorunlu
       url.searchParams.set("deviceId", device.id);
       url.searchParams.set("state", state ? "true" : "false");
       const r = await fetch(url, { method: "POST" });
@@ -420,25 +418,26 @@ function LedControl({ device }) {
     }
   };
   return (
-    <div className="ds-controls">
-      <button
-        className={cls("ds-btn", on ? "ds-btn--success" : "ds-btn--secondary")}
-        onClick={() => toggle(!on)}
-        disabled={busy}
-      >
-        {on ? "LED Kapat" : "LED Aç"}
-      </button>
-    </div>
+      <div className="ds-controls">
+        <button
+            className={cls("ds-btn", on ? "ds-btn--success" : "ds-btn--secondary")}
+            onClick={() => toggle(!on)}
+            disabled={busy}
+        >
+          {on ? "LED Kapat" : "LED Aç"}
+        </button>
+      </div>
   );
 }
 
-function ServoControl({ device }) {
+function ServoControl({ device, userId }) {
   const [angle, setAngle] = useState(0);
   const [busy, setBusy] = useState(false);
   const send = async (a) => {
     setBusy(true);
     try {
       const url = new URL(`${API}/api/control/servo`);
+      url.searchParams.set("userId", userId);           // ⬅ zorunlu
       url.searchParams.set("deviceId", device.id);
       url.searchParams.set("angle", a);
       const r = await fetch(url, { method: "POST" });
@@ -450,34 +449,35 @@ function ServoControl({ device }) {
     }
   };
   return (
-    <div className="ds-controls">
-      <input
-        type="range"
-        min="0"
-        max="180"
-        value={angle}
-        onChange={(e) => setAngle(Number(e.target.value))}
-      />
-      <div className="ds-inline">
-        <span className="ds-note">Açı: {angle}°</span>
-        <button
-          className="ds-btn ds-btn--primary"
-          onClick={() => send(angle)}
-          disabled={busy}
-        >
-          Gönder
-        </button>
+      <div className="ds-controls">
+        <input
+            type="range"
+            min="0"
+            max="180"
+            value={angle}
+            onChange={(e) => setAngle(Number(e.target.value))}
+        />
+        <div className="ds-inline">
+          <span className="ds-note">Açı: {angle}°</span>
+          <button
+              className="ds-btn ds-btn--primary"
+              onClick={() => send(angle)}
+              disabled={busy}
+          >
+            Gönder
+          </button>
+        </div>
       </div>
-    </div>
   );
 }
 
-function BuzzerControl({ device }) {
+function BuzzerControl({ device, userId }) {
   const [busy, setBusy] = useState(false);
   const beep = async () => {
     setBusy(true);
     try {
       const url = new URL(`${API}/api/control/buzzer`);
+      url.searchParams.set("userId", userId);           // ⬅ zorunlu
       url.searchParams.set("deviceId", device.id);
       url.searchParams.set("action", "beep");
       const r = await fetch(url, { method: "POST" });
@@ -489,14 +489,14 @@ function BuzzerControl({ device }) {
     }
   };
   return (
-    <div className="ds-controls">
-      <button
-        className="ds-btn ds-btn--warning"
-        onClick={beep}
-        disabled={busy}
-      >
-        Beep
-      </button>
-    </div>
+      <div className="ds-controls">
+        <button
+            className="ds-btn ds-btn--warning"
+            onClick={beep}
+            disabled={busy}
+        >
+          Beep
+        </button>
+      </div>
   );
 }
