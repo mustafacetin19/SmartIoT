@@ -1,8 +1,10 @@
+// PATH: src/main/java/com/example/smartiot/controller/UserDeviceController.java
 package com.example.smartiot.controller;
 
 import com.example.smartiot.model.Device;
 import com.example.smartiot.model.User;
 import com.example.smartiot.model.UserDevice;
+import com.example.smartiot.repository.UserDeviceRepository;
 import com.example.smartiot.service.UserDeviceService;
 import com.example.smartiot.service.UserService;
 
@@ -32,6 +34,10 @@ public class UserDeviceController {
 
     private final UserDeviceService userDeviceService;
     private final UserService userService;
+    private final UserDeviceRepository userDeviceRepo; // başka uçlar için kalabilir
+
+    // Minimal seçenek DTO'su
+    public record MinimalOption(Long id, String label) {}
 
     @Operation(summary = "Kullanıcının cihazlarını listele")
     @ApiResponse(responseCode = "200", description = "Başarılı",
@@ -43,6 +49,33 @@ public class UserDeviceController {
         User user = userService.getUserById(userId)
                 .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
         return userDeviceService.getDevicesByUser(user);
+    }
+
+    // ======= Minimal: sadece bu kullanıcıya ait AKTİF user_device seçenekleri =======
+    @Operation(summary = "Kullanıcının aktif cihazları (minimal)")
+    @GetMapping("/mine/minimal")
+    public List<MinimalOption> myActiveMinimal(@RequestParam Long userId) {
+        var list = userDeviceService.findActiveOfUser(userId); // ✅ active=true
+        return list.stream()
+                .filter(ud -> ud.getStatus() == UserDevice.Status.ACTIVE) // ✅ status=ACTIVE
+                .map(ud -> {
+                    String room  = ud.getUserRoom() != null ? ud.getUserRoom().getRoomName() : "";
+                    String model = (ud.getDevice() != null && ud.getDevice().getDeviceModel() != null)
+                            ? ud.getDevice().getDeviceModel()
+                            : "";
+                    String name  = (ud.getAssignedName() != null && !ud.getAssignedName().isBlank())
+                            ? ud.getAssignedName()
+                            : "Device";
+                    String prefix = !room.isBlank() ? room + " · " : "";
+                    String right  = !model.isBlank() ? " (" + model + ")" : "";
+                    return new MinimalOption(ud.getId(), (prefix + name + right).trim());
+                })
+                .toList();
+    }
+
+    @GetMapping("/my-active")
+    public List<MinimalOption> myActiveAlias(@RequestParam Long userId) {
+        return myActiveMinimal(userId);
     }
 
     // ======= Modelden otomatik atama (ünite göstermeden) =======
@@ -63,7 +96,6 @@ public class UserDeviceController {
                                     "}")))
             @org.springframework.web.bind.annotation.RequestBody AssignByModelDto dto) {
 
-        // ---- ZORUNLU ALAN KONTROLÜ ----
         if (dto == null
                 || dto.getUserId() == null
                 || dto.getModel() == null || dto.getModel().trim().isEmpty()
@@ -102,7 +134,6 @@ public class UserDeviceController {
         return userDeviceService.setActiveStatus(id, active);
     }
 
-    // DEPRECATED: Eski çağrılar 'geçici' remove gibi davransın
     @PutMapping("/{id}/deactivate")
     public ResponseEntity<?> deactivateUserDevice(@PathVariable Long id) {
         boolean success = userDeviceService.deactivateUserDevice(id);
@@ -110,7 +141,6 @@ public class UserDeviceController {
     }
 
     // ✅ YENİ: Remove – geçici/kalıcı
-    // mode: temporary | replace
     @PatchMapping("/{id}/remove")
     public ResponseEntity<Void> remove(@PathVariable Long id,
                                        @RequestParam Long userId,
@@ -153,5 +183,4 @@ public class UserDeviceController {
         String assignedName = body.get("assignedName").toString();
         return userDeviceService.assignFromPool(userDeviceId, userId, userRoomId, assignedName);
     }
-
 }

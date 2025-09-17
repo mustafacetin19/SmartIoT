@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { api } from '../lib/http';
 import './Panel.css';
 
 function LedPanel({ device }) {
@@ -18,7 +18,7 @@ function LedPanel({ device }) {
     }
     try {
       const next = !isOn;
-      await axios.post('http://localhost:8080/api/control/led', null, {
+      await api.post('/control/led', null, {
         params: { userId, deviceId: unitId, state: next }
       });
       setIsOn(next);

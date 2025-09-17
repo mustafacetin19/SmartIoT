@@ -1,3 +1,4 @@
+// PATH: src/main/java/com/example/smartiot/repository/UserDeviceRepository.java
 package com.example.smartiot.repository;
 
 import com.example.smartiot.model.Device;
@@ -33,8 +34,18 @@ public interface UserDeviceRepository extends JpaRepository<UserDevice, Long> {
     // Havuz sayısı
     long countByUser_IdAndDevice_IdAndUserRoomIsNullAndActiveTrue(Long userId, Long deviceId);
 
-    // Yetki kontrolü (HATALI olan imza düzeltildi)
+    // Yetki kontrolü (aktif)
     boolean existsByUser_IdAndDevice_IdAndActiveTrue(Long userId, Long deviceId);
+
+    // ✅ Yalnızca bu kullanıcıya ait + aktif (active=true) + status=ACTIVE (veya null) user_device kayıtları
+    @Query("""
+      select ud from UserDevice ud
+      where ud.user.id = :userId
+        and ud.active = true
+        and (ud.status = com.example.smartiot.model.UserDevice.Status.ACTIVE or ud.status is null)
+      order by ud.id asc
+    """)
+    List<UserDevice> findAllActiveForUser(@Param("userId") Long userId);
 
     // Kullanıcının kullanabildiği aktif Device listesi
     @Query("""

@@ -36,3 +36,99 @@
     transform: rotate(360deg);
   }
 }
+/* --- Layout fix: navbar yüksekliğini telafi et --- */
+.layout-content {
+  padding-top: 24px; /* üstte küçük boşluk */
+}
+
+/* Modal ve form stillerinin hızlı hali (gerekirse ince işler sonra yapılır) */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.5);
+  display: grid; place-items: center;
+  z-index: 40;
+}
+.modal {
+  width: min(920px, 92vw);
+  background: #0e151a;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.5);
+  padding: 16px;
+}
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.scene-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.scene-form .form-row:first-child {
+  grid-template-columns: 1fr 1fr;
+}
+.scene-form .form-col label { display:block; font-size:.85rem; opacity:.8; margin-bottom:6px; }
+.scene-form input, .scene-form select {
+  width:100%; background:#151e25; color:#e6f3f9;
+  border:1px solid rgba(255,255,255,.08); border-radius:10px;
+  padding:10px 12px;
+}
+.scene-form .form-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:12px; }
+.err { color:#ff8a8a; }
+
+/* Scene list quick style */
+.scene-list { display:flex; flex-direction:column; gap:10px; }
+.scene-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 12px; background:#0f171d; border:1px solid rgba(255,255,255,.08); border-radius:12px;
+}
+.scene-title { display:flex; align-items:center; gap:12px; }
+.scene-title .name { font-weight:600; }
+.scene-title .sub { font-size:.85rem; opacity:.7; }
+/* ---- Genel küçük düzeltmeler ---- */
+a { text-decoration: none; color: inherit; }
+a:hover { text-decoration: none; }
+
+.container-narrow { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+.page-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:16px; }
+.eyebrow { letter-spacing:.12em; font-size:.8rem; color:#9aa4b2; margin-bottom:4px; }
+
+.card { background: #0f141a; border: 1px solid #1f2937; border-radius: 12px; padding: 16px; margin-top: 16px; }
+.muted { color:#94a3b8; }
+
+/* Buttons */
+.btn { background:#1f2937; border:1px solid #334155; color:#e5e7eb; border-radius:10px; padding:8px 14px; cursor:pointer; }
+.btn:hover { filter:brightness(1.08); }
+.btn.primary { background:#10b981; border-color:#059669; }
+.btn.danger { background:#dc2626; border-color:#b91c1c; }
+
+/* Modal */
+.modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.5); z-index:1000; }
+.modal-card { width:min(950px, 96vw); max-height:90vh; overflow:auto; background:#0b1016; border:1px solid #1f2937; border-radius:16px; padding:16px; }
+.modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+
+/* Scene form */
+.scene-form .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:8px; }
+.scene-form .field label { font-size:.85rem; color:#9aa4b2; display:block; margin-bottom:4px; }
+.scene-form input, .scene-form select { width:100%; background:#0f141a; color:#e5e7eb; border:1px solid #334155; border-radius:10px; padding:10px 12px; }
+.actions-title{margin:8px 0; color:#9aa4b2;}
+.action-row{display:grid; grid-template-columns:2fr 1.2fr .8fr auto; gap:8px; margin-bottom:8px;}
+.scene-form .buttons{display:flex; justify-content:space-between; margin-top:12px;}
+.scene-form .buttons .right{display:flex; gap:8px;}
+
+/* Scene list */
+.scene-list { display:flex; flex-direction:column; gap:8px; }
+.scene-item { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px; border:1px solid #243042; border-radius:10px; }
+.scene-name { font-weight:600; }
+.scene-sub { color:#9aa4b2; font-size:.9rem; }
+
+/* Logs */
+.log-list{display:flex; flex-direction:column; gap:8px;}
+.log-row{display:flex; gap:12px; padding:10px; border-radius:10px; border:1px solid #243042;}
+.log-row.ok{border-color:#14532d; background:rgba(16,185,129,0.06);}
+.log-row.fail{border-color:#7f1d1d; background:rgba(239,68,68,0.06);}
+.log-time{min-width:220px; color:#9aa4b2;}
+.alert.error{background:#2b1a1a; border:1px solid #7f1d1d; color:#ef4444; padding:10px 12px; border-radius:10px; margin:6px 0 10px;}
+

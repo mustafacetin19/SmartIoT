@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { api } from '../lib/http';
 import './Panel.css';
 
 function BuzzerPanel({ device }) {
@@ -16,7 +16,7 @@ function BuzzerPanel({ device }) {
       return;
     }
     try {
-      await axios.post('http://localhost:8080/api/control/buzzer', null, {
+      await api.post('/control/buzzer', null, {
         params: { userId, deviceId: unitId, action: times === 1 ? 'beep' : `beep${times}` }
       });
       setMsg(`✅ ${title} ${times} kez çaldı.`);

@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class MqttPublisher {
 
-    private final String brokerUrl = "tcp://192.168.199.225:1883";
+    private final String brokerUrl = "tcp://192.168.6.225:1883";
     private final String clientId = "SpringBootPublisher";
     private MqttClient client;
 

@@ -1,53 +1,82 @@
-// src/App.jsx
+// PATH: src/App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-
-import Home from './pages/Home';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import About from './pages/About';
-import Devices from './pages/Devices';
-import CustomPanel from './pages/CustomPanel';
-import AddDevicePage from './pages/AddDevicePage';
-import DeviceSelectionPage from './pages/DeviceSelectionPage';
-import UserSettingsPage from './pages/UserSettingsPage';
-import DemoPanel from './pages/DemoPanel';
-import NotFound from './pages/NotFoundPage';
-import DeviceRegistrationPage from './pages/DeviceRegistrationPage';
-import RoomCreationPage from './pages/RoomCreationPage';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import PrivateRoute from './components/PrivateRoute';
 
+import Home from './pages/Home';
+import About from './pages/About';
+import Devices from './pages/Devices';
+import DeviceSelectionPage from './pages/DeviceSelectionPage';
+import DemoPanel from './pages/DemoPanel';
+import CustomPanel from './pages/CustomPanel';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import UserSettingsPage from './pages/UserSettingsPage';
+
+// SCENES
+import ScenesPage from './pages/ScenesPage';
+
 function AppContent() {
   const location = useLocation();
-  const hideLayoutRoutes = [];
+  const hideLayoutRoutes = []; // gerekirse ekleyebilirsin
   const hideLayout = hideLayoutRoutes.includes(location.pathname);
 
   return (
     <>
       {!hideLayout && <Navbar />}
-      <Routes>
-        {/* Public */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/devices" element={<Devices />} />
-        <Route path="/demo-panel" element={<DemoPanel />} />
-        <Route path="/my-devices/new" element={<DeviceRegistrationPage />} />
 
-        {/* Private */}
-        <Route path="/custom-panel" element={<PrivateRoute><CustomPanel /></PrivateRoute>} />
-        <Route path="/add-device" element={<PrivateRoute><AddDevicePage /></PrivateRoute>} />
-        <Route path="/select-device" element={<PrivateRoute><DeviceSelectionPage /></PrivateRoute>} />
-        <Route path="/rooms/new" element={<PrivateRoute><RoomCreationPage /></PrivateRoute>} />
-        <Route path="/user-settings" element={<PrivateRoute><UserSettingsPage /></PrivateRoute>} />
+      <div className="app-container">
+        <Routes>
+          {/* Herkese açık sayfalar */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/devices" element={<Devices />} />
+          <Route path="/demo-panel" element={<DemoPanel />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
-        {/* 404 */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+          {/* Korumalı sayfalar */}
+          <Route
+            path="/select-device"
+            element={
+              <PrivateRoute>
+                <DeviceSelectionPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/custom-panel"
+            element={
+              <PrivateRoute>
+                <CustomPanel />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/scenes"
+            element={
+              <PrivateRoute>
+                <ScenesPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user-settings"
+            element={
+              <PrivateRoute>
+                <UserSettingsPage />
+              </PrivateRoute>
+            }
+          />
+
+          {/* 404 → Home */}
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </div>
+
       {!hideLayout && <Footer />}
     </>
   );
@@ -55,8 +84,8 @@ function AppContent() {
 
 export default function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <AppContent />
-    </Router>
+    </BrowserRouter>
   );
 }

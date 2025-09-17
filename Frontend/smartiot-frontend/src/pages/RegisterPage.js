@@ -11,7 +11,7 @@ function RegisterPage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [message, setMessage] = useState('');
-  const [isError, setIsError] = useState(false); // ✅ mesaj rengi için
+  const [isError, setIsError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -69,22 +69,22 @@ function RegisterPage() {
     }
 
     try {
-      const registerResponse = await axios.post('http://localhost:8080/api/register', {
+      const registerResponse = await axios.post('/api/register', {
         email,
         password,
         firstName,
         lastName,
-      });
+      }, { withCredentials: true });
 
-      // ✅ Kayıt başarılıysa otomatik login:
-      const loginResponse = await axios.post('http://localhost:8080/api/login', {
+      // ✅ kayıt başarılıysa otomatik login
+      const loginResponse = await axios.post('/api/login', {
         email,
         password,
-      });
+      }, { withCredentials: true });
 
       localStorage.setItem('user', JSON.stringify(loginResponse.data));
       showMessage('🎉 Registration & login successful! Redirecting...', false);
-      setTimeout(() => navigate('/'), 3000); // Anasayfaya yönlendir
+      setTimeout(() => navigate('/'), 3000);
     } catch (error) {
       if (error.response && error.response.data) {
         showMessage(`❌ ${error.response.data}`, true);

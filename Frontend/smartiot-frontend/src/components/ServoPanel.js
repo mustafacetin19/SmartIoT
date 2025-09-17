@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { api } from '../lib/http';
 import './Panel.css';
 
 function ServoPanel({ device, defaultAngle = 90 }) {
@@ -19,7 +19,7 @@ function ServoPanel({ device, defaultAngle = 90 }) {
       return;
     }
     try {
-      await axios.post('http://localhost:8080/api/control/servo', null, {
+      await api.post('/control/servo', null, {
         params: { userId, deviceId: unitId, angle: Number(angle) }
       });
       setStatus('✅ Komut gönderildi.');

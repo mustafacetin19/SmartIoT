@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { api } from '../lib/http';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import './Panel.css';
 import '../components/Buttons.css';
@@ -19,7 +19,7 @@ function SensorPanel({ device }) {
     const fetchSensorData = async () => {
       try {
         if (userId && unitId) {
-          const res = await axios.get('http://localhost:8080/api/control/sensor/last', {
+          const res = await api.get('/control/sensor/last', {
             params: { userId, deviceId: unitId }
           });
           if (mounted && res.status === 200) {
@@ -31,7 +31,7 @@ function SensorPanel({ device }) {
           }
         }
         // Fallback (global)
-        const response = await axios.get("http://localhost:8080/api/sensor");
+        const response = await api.get('/sensor');
         const { temperature, humidity } = response.data;
         if (mounted) {
           setTemperature(temperature);

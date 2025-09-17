@@ -1,58 +1,76 @@
-// src/pages/UserSettingsPage.jsx
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import './UserSettingsPage.css';
+import { useNavigate } from 'react-router-dom';
 
-const UserSettingsPage = () => {
+export default function UserSettingsPage() {
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState('');
+  const [err, setErr] = useState('');
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
+  
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    // localStorage'dan kullanıcıyı göster (backend'e bağlı kalmadan)
+    const stored = localStorage.getItem('user');
+    setUser(stored ? JSON.parse(stored) : null);
+    setLoading(false);
   }, []);
 
-  const handleDeactivate = async () => {
+  const handleDelete = async () => {
     if (!user) return;
+    if (!window.confirm('Hesabını kalıcı olarak silmek istediğine emin misin?')) return;
 
     try {
-      const response = await axios.put(`http://localhost:8080/api/users/${user.id}/deactivate`);
-      if (response.status === 200) {
-        localStorage.removeItem('user');
-        window.location.href = "/login"; // logout ve yönlendirme
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage("❌ Failed to deactivate account.");
+      // Backend’inizde uygun endpoint varsa:
+      const res = await fetch(`http://localhost:8080/api/users/${user.id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      localStorage.removeItem('user');
+      navigate('/register');
+    } catch (e) {
+      setErr('Hesap silinemedi veya endpoint mevcut değil. (Detay: ' + (e?.message || 'bilinmiyor') + ')');
     }
   };
 
-  if (!user) {
-    return <div className="panel-container">Loading user info...</div>;
-  }
+  if (loading) return <div className="page page-narrow"><div className="skeleton">Yükleniyor…</div></div>;
 
   return (
-    <div className="panel-container user-settings-page">
-      <h2>⚙️ Account Settings</h2>
+      <div className="page page-narrow">
+        <h1 className="page-title">Account Settings</h1>
 
-      <div className="user-info">
-        <p><strong>👤 First Name:</strong> {user.firstName}</p>
-        <p><strong>🧑‍💼 Last Name:</strong> {user.lastName}</p>
-        <p><strong>📧 Email:</strong> {user.email}</p>
-        <p><strong>🆔 ID:</strong> {user.id}</p>
+        {err && <div className="alert error">{err}</div>}
+
+        {!user ? (
+            <div className="card">
+              <p>Oturum bulunamadı.</p>
+              <button className="btn" onClick={() => navigate('/login')}>Login</button>
+            </div>
+        ) : (
+            <div className="card">
+              <div className="grid two">
+                <div>
+                  <label>ID</label>
+                  <div className="value">{user.id}</div>
+                </div>
+                <div>
+                  <label>Role</label>
+                  <div className="value">{user.role || 'user'}</div>
+                </div>
+                <div>
+                  <label>Ad Soyad</label>
+                  <div className="value">{user.firstName} {user.lastName}</div>
+                </div>
+                <div>
+                  <label>Email</label>
+                  <div className="value">{user.email}</div>
+                </div>
+              </div>
+
+              <div className="actions">
+                <button className="btn danger" onClick={handleDelete}>Hesabı Sil</button>
+                <button className="btn ghost" onClick={() => navigate('/')}>Geri</button>
+              </div>
+            </div>
+        )}
       </div>
-
-      <div className="settings-buttons">
-        <button className="btn btn-deactivate" onClick={handleDeactivate}>
-          <i className="material-icons"></i> Deactivate My Account
-        </button>
-      </div>
-
-      {message && <p className="error-msg">{message}</p>}
-    </div>
   );
-};
-
-export default UserSettingsPage;
+}

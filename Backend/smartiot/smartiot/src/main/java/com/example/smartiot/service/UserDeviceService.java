@@ -1,3 +1,4 @@
+// PATH: src/main/java/com/example/smartiot/service/UserDeviceService.java
 package com.example.smartiot.service;
 
 import com.example.smartiot.model.Device;
@@ -30,6 +31,13 @@ public class UserDeviceService {
     public void deleteById(Long id) { userDeviceRepository.deleteById(id); }
     public List<UserDevice> getAllUserDevices() { return userDeviceRepository.findAll(); }
 
+    /** ✅ Scenes combobox için: sadece active=true kayıtları userId ile getir. */
+    public List<UserDevice> findActiveOfUser(Long userId) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı"));
+        return userDeviceRepository.findByUserAndActiveTrue(user);
+    }
+
     public UserDevice setActiveStatus(Long id, boolean active) {
         UserDevice userDevice = userDeviceRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("UserDevice not found"));
@@ -55,7 +63,7 @@ public class UserDeviceService {
     public void removeUserDevice(Long userDeviceId, Long userId, String mode) {
         UserDevice ud = userDeviceRepository.findById(userDeviceId)
                 .orElseThrow(() -> new IllegalArgumentException("UserDevice bulunamadı: " + userDeviceId));
-        if (!ud.getUser().getId().equals(userId)) {
+        if (ud.getUser() == null || ud.getUser().getId() == null || !ud.getUser().getId().equals(userId)) {
             throw new SecurityException("Bu cihazı kaldırma yetkiniz yok.");
         }
 

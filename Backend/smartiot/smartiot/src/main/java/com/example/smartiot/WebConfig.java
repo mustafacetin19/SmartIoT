@@ -1,4 +1,4 @@
-package com.example.smartiot.config;
+package com.example.smartiot;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;

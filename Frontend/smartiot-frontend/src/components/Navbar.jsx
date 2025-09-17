@@ -1,99 +1,105 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import './Navbar.css';
+// PATH: src/components/Navbar.jsx
+import React, { useEffect, useRef, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import "./Navbar.css";
+import { getCurrentUserName, clearSession } from "../api";
 
-function Navbar() {
-  const location = useLocation();
+export default function Navbar() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Kullanıcı adı
+  const [userName, setUserName] = useState(getCurrentUserName());
+
+  // Dropdown kontrolü
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
+  const btnRef = useRef(null);
+
+  // Storage değişince kullanıcı adını tazele
   useEffect(() => {
-    const stored = localStorage.getItem('user');
-    if (stored) {
-      setUser(JSON.parse(stored));
-    } else {
-      setUser(null);
-    }
-  }, [location]);
+    const handler = () => setUserName(getCurrentUserName());
+    window.addEventListener("storage", handler);
+    handler(); // ilk mount
+    return () => window.removeEventListener("storage", handler);
+  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    setUser(null);
-    navigate('/login');
+  // Dışarı tıklayınca & ESC ile dropdown kapat
+  useEffect(() => {
+    const onClickOutside = (e) => {
+      if (!open) return;
+      const clickedInside =
+        menuRef.current?.contains(e.target) || btnRef.current?.contains(e.target);
+      if (!clickedInside) setOpen(false);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const logout = (e) => {
+    e.preventDefault();
+    clearSession();
+    setOpen(false);
+    navigate("/login", { replace: true });
   };
 
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-
   return (
-    <nav className="navbar">
-      <Link to="/" className="navbar-logo">
-        <span className="brand-bold">Smart</span>IoT
-      </Link>
+    <header className="nav">
+      <div className="nav__inner">
+        {/* sol: marka */}
+        <Link to="/" className="nav__brand">
+          <span className="nav__logoDot" />
+          <span className="nav__brandText">SmartIoT</span>
+        </Link>
 
-      <ul className="nav-links">
-        <li>
-          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
-            SmartIoT
-          </Link>
-        </li>
-        <li>
-          <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>
-            What is IoT?
-          </Link>
-        </li>
-        <li>
-          <Link to="/devices" className={location.pathname === '/devices' ? 'active' : ''}>
-            Devices
-          </Link>
-        </li>
+        {/* orta: bağlantılar (wrap'lanır, her cihazda görünür) */}
+        <nav className="nav__links" aria-label="Main">
+          <NavLink to="/" className="nav__link">SmartIoT</NavLink>
+          <NavLink to="/about" className="nav__link">What is IoT?</NavLink>
+          <NavLink to="/devices" className="nav__link">Devices</NavLink>
+          <NavLink to="/select-device" className="nav__link">Rooms &amp; Assign</NavLink>
+          <NavLink to="/scenes" className="nav__link">Scenes</NavLink>
+        </nav>
 
-        {/* ✅ Personal IoT Menüsü */}
-        <li className="dropdown">
-          <span className="dropdown-title">Personal IoT</span>
-          <ul className="dropdown-content">
-            <li>
-              <Link to="/demo-panel" className={location.pathname === '/demo-panel' ? 'active' : ''}>
-                Test Panel
-              </Link>
-            </li>
-            <li>
-              <Link to="/custom-panel" className={location.pathname === '/custom-panel' ? 'active' : ''}>
-                Custom IoT
-              </Link>
-            </li>
-            <li>
-              <Link to="/select-device" className={location.pathname === '/select-device' ? 'active' : ''}>
-                Select Device
-              </Link>
-            </li>
-          </ul>
-        </li>
+        {/* sağ: kullanıcı */}
+        <div className="nav__user">
+          <button
+            ref={btnRef}
+            type="button"
+            className="nav__userBtn"
+            aria-expanded={open}
+            aria-haspopup="menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            Hoş geldin, {userName || "Misafir"}
+          </button>
 
-        {!user ? (
-          <>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/register">Register</Link></li>
-          </>
-        ) : (
-          <li className="user-menu" onClick={toggleDropdown}>
-            <span className="user-name">
-              {user.firstName} {user.lastName}
-              <span className="dropdown-arrow">▾</span>
-            </span>
-            {dropdownOpen && (
-              <div className="user-dropdown">
-                <p><strong>ID:</strong> {user.id}</p>
-                <p><strong>Email:</strong> {user.email}</p>
-                <Link to="/user-settings" className="dropdown-link">⚙️ Account Settings</Link>
-                <button className="logout-button-nav" onClick={handleLogout}>Logout</button>
-              </div>
-            )}
-          </li>
-        )}
-      </ul>
-    </nav>
+          {open && (
+            <div
+              ref={menuRef}
+              role="menu"
+              className="nav__menu"
+              aria-label="User"
+            >
+              <Link role="menuitem" to="/custom-panel" onClick={() => setOpen(false)}>
+                Personal IoT
+              </Link>
+              <Link role="menuitem" to="/user-settings" onClick={() => setOpen(false)}>
+                Account
+              </Link>
+              <a role="menuitem" href="/login" onClick={logout}>
+                Logout
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
   );
 }
-
-export default Navbar;

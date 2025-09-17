@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { api } from '../lib/http';
 
 function RfidPanel({ device }) {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -14,7 +14,7 @@ function RfidPanel({ device }) {
     const fetchCardId = async () => {
       try {
         if (userId && unitId) {
-          const res = await axios.get('http://localhost:8080/api/control/rfid/last', {
+          const res = await api.get('/control/rfid/last', {
             params: { userId, deviceId: unitId }
           });
           if (mounted && res.status === 200) {
@@ -23,7 +23,7 @@ function RfidPanel({ device }) {
           }
         }
         // Fallback (global status)
-        const response = await axios.get('/api/status');
+        const response = await api.get('/status');
         if (mounted) setLastCardId(response.data.lastCardID || "-");
       } catch (error) {
         console.error('Card ID could not be obtained:', error);

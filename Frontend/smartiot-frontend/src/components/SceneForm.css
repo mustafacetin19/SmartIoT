@@ -1,0 +1,14 @@
+.card{background:#0b1220;border:1px solid rgba(0,255,255,.12);border-radius:14px;padding:16px}
+.cardHeader{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.field{display:grid;gap:6px;margin-bottom:12px}
+.rows{display:grid;gap:10px}
+.row{display:grid;grid-template-columns:1fr 160px 1fr 110px;gap:10px}
+.col{display:grid;gap:6px}
+.actions{display:flex;align-items:end}
+.input,.select{background:#0f192b;border:1px solid rgba(0,255,255,.12);border-radius:10px;padding:10px;color:#eaf6ff}
+.btn{border-radius:10px;padding:10px 14px;border:1px solid rgba(0,255,255,.16);cursor:pointer}
+.btn.primary{background:#0ea5e9;color:white}
+.btn.ghost{background:transparent;color:#cfe9ff}
+.actionsBar{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
+.error{margin-top:10px;color:#ffb4b4}
+@media (max-width: 920px){ .row{grid-template-columns:1fr} }
