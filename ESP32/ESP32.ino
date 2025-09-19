@@ -7,24 +7,24 @@
 
 // ====================== KULLANICI AYARLARI ======================
 // Wi-Fi
-const char* ssid     = "Mustafa adlı kişiye ait S23 FE";
-const char* password = "Mustafa_1903";
+const char* ssid     = "[Wifi_Name]";
+const char* password = "[Wifi_Password]";
 
 // MQTT Broker (Spring/Sunucu ile aynı IP olmalı!)
-const char* mqtt_server = "192.168.199.225";
+const char* mqtt_server = "[Wifi_IP]";
 const int   mqtt_port   = 1883;
 
 // === DB'deki devices.id ile EŞLEŞEN FİZİKSEL CİHAZ ID'LERİ ===
 // (Lütfen kendi veritabanındaki gerçek ID'lerle doldur)
-const long SERVO1_ID     = 501;   // ör: 501 id:9 için
-const long SERVO2_ID     = 502;   // ör: 502 id:1 için
-const long LED_WHITE_ID  = 7;     // ör: 1   id:1 için
-const long LED_RED_ID    = 2;     // ör: 2   id:1 için
-const long LED_YELLOW_ID = 3;     // ör: 3   id:8 için
-const long LED_BLUE_ID   = 4;     // ör: 4   id:1 için
-const long BUZZER_ID     = 602;   // ör: 602 id:7 için
+const long SERVO1_ID     = 502;   // ör: 501 id:1 için
+const long SERVO2_ID     = 503;   // ör: 502 id:1 için
+const long LED_WHITE_ID  = 8;     // ör: 1   id:1 için
+const long LED_RED_ID    = 102;     // ör: 2   id:1 için
+const long LED_YELLOW_ID = 302;     // ör: 3   id:1 için
+const long LED_BLUE_ID   = 202;     // ör: 4   id:1 için
+const long BUZZER_ID     = 601;   // ör: 602 id:7 için
 const long SENSOR_ID     = 701;   // DHT11 için (ör: 701) id:9 için
-const long RFID_ID       = 401;   // RFID okuyucu için (kendine göre ayarla) id:7 için
+const long RFID_ID       = 403;   // RFID okuyucu için (kendine göre ayarla) id:1 için
 
 
 // ====================== DONANIM PINLERİ ======================
